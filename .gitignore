@@ -1,0 +1,26 @@
+# 機密情報
+.env
+*.key
+*.pem
+credentials/
+*credentials*.json
+*service-account*.json
+*oauth*.json
+
+# クライアント情報・機密メモリ
+00_context/memories/clients.md
+00_context/memories/pricing-policy.md
+
+# 経理・財務の詳細データ
+02_finance/invoices/
+02_finance/contracts/
+
+# OS・エディタ
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 一時ファイル
+*.tmp
+*.log
