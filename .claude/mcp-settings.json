@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "google-calendar": {
+      "command": "npx",
+      "args": ["-y", "@cocal/google-calendar-mcp"],
+      "env": {
+        "GOOGLE_OAUTH_CREDENTIALS": "~/.claude/google-oauth-credentials.json"
+      }
+    },
+    "google-sheets": {
+      "command": "npx",
+      "args": ["-y", "@googleapis/sheets"],
+      "env": {
+        "GOOGLE_SERVICE_ACCOUNT_KEY": "~/.claude/google-service-account.json"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}
