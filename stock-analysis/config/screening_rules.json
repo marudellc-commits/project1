@@ -1,0 +1,9 @@
+{
+  "PER": {"max": 20},
+  "PBR": {"max": 3},
+  "ROE": {"min": 8},
+  "dividend_yield": {"min": 1},
+  "equity_ratio": {"min": 40},
+  "earnings_growth": {"min": 15},
+  "peg_ratio": {"max": 2.0}
+}
