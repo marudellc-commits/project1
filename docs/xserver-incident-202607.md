@@ -56,6 +56,16 @@ XserverサーバーパネルでPHPバージョンを8.1以上に上げたとこ�
 
 - [ ] `marker-animation`の代替プラグイン、または開発元（Technote）の更新版有無を確認
 
+## 追記（2026-07-18）：wp-content配下に追加バックドア8個を発見・除去
+
+管理画面の「Could not create .../ai1wm-backups/.htaccess file」エラーをきっかけに、`wp-content`配下（テーマ・プラグインフォルダ内）が広範囲に読み取り専用化されていたことが判明。これは`wp core verify-checksums`の対象外（コアファイルのみチェックする仕組みのため）で、初回の復旧作業では見逃していた領域。
+
+- 読み取り専用ファイル1885個（.htaccess/index.php等）の権限を復旧
+- 隠しバックドアディレクトリ「wp」を8個発見・削除（テーマ・Smart Sliderプラグイン・アップグレード一時フォルダ内に偽装設置、証跡は`~/incident_evidence_20260718_part3.tar.gz`）
+- 削除後、3サイトともコア整合性チェック成功・正常表示を再確認
+
+**教訓**：`wp core verify-checksums`はwp-admin/wp-includesのみが対象で、`wp-content`（テーマ・プラグイン）配下は検証対象外。今後同様の侵害対応では、`wp-content`配下も含めて「`wp`という名前の不審なサブディレクトリ」を明示的に検索する必要がある。
+
 ## 教訓
 
 - 新規サイト公開時は、Wordfence + AIOS導入を初期セットアップの標準手順に組み込む（後回しにすると今回のように無防備な期間が生まれる）
