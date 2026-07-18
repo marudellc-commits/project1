@@ -93,6 +93,20 @@ Wordfenceの初回マルウェアスキャンで、AIOSプラグイン内(`simba
 
 **教訓**：ファイル名・サイズによる検出は攻撃者がパターンを変えると漏れる。`goto`難読化や`eval(base64_decode(`のような**コード構造そのもの**を検索する方法の方が確実。今後の同種対応では最初からこの構造検索を使うべき。
 
+## 追記（2026-07-19）：skybaseで謎の表示崩れ調査 + uploads内バックドア発見
+
+### skybase管理画面・フロントでの謎テキスト表示
+`skybase.marudellc.com`の管理画面・フロント両方の冒頭に`<FilesMatch>...Deny from all</FilesMatch>`という不可解なテキストが表示される症状が発生。AIOS/Wordfence/全プラグイン/wp-config.php/コア/DB全体を切り分けたが原因コードの特定には至らず、標準テーマへの一時切り替えテストで**テーマ「rediver/rediver-child」が原因である**ことのみ確定。原因箇所はこの大規模カスタムテーマ内のどこかに埋もれており未特定。対症療法として`wp-content/mu-plugins/strip-leaked-htaccess-text.php`を設置し、出力バッファで該当テキストを自動除去する回避策を適用（表示は解消、根本原因は未解明のまま）。
+
+副産物として、テーマのソースコードに以下を発見（今回の侵害とは別の、テーマ提供元由来の問題）：
+- `update_checker()`内にGitHubアクセストークンがハードコード
+- `Widget.php`の`download_widget_backup()`に`$_GET['file']`未検証の任意ファイル読み取り脆弱性
+
+### uploads内バックドア発見
+Wordfenceのスキャンで`skybase.marudellc.com/wp-content/uploads/2026/07/DnZZCBTa.php`を検出（コメント難読化されたeval(base64_decode(...))、設置日5/6）。`wp-content/uploads`はWordPressが実行可能なPHPを置く場所ではないため、この場所にPHPファイルがあること自体が強いシグナル。削除・証跡保存（`~/incident_evidence_20260719_part9.tar.gz`）。なお同ディレクトリの`aios/firewall-rules/settings.php`はAIOSプラグイン自身が生成する正規ファイルで問題なし。
+
+**教訓**：`wp-content/uploads`配下も定期的に`*.php`ファイルの有無をチェックすべき（画像やドキュメントしか置かれないはずの場所）。
+
 ## 教訓
 
 - 新規サイト公開時は、Wordfence + AIOS導入を初期セットアップの標準手順に組み込む（後回しにすると今回のように無防備な期間が生まれる）
